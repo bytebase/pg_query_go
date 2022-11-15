@@ -95,6 +95,7 @@ PgQueryDeparseResult pg_query_deparse_protobuf(PgQueryProtobuf parse_tree);
 
 enum DeparseType{
 	deparse_type_expr,
+  deparse_type_exclusions,
 };
 PgQueryDeparseResult pg_query_deparse_node_protobuf(enum DeparseType deparse_type, PgQueryProtobuf parse_tree);
 
