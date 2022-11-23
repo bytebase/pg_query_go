@@ -11,28 +11,31 @@ import (
 type DeparseType int
 
 const (
-	DeparseTypeExpr      DeparseType = iota
-	DeparseTypeExclusion DeparseType = iota
+	DeparseTypeExpr DeparseType = iota
+	DeparseTypeExclusion
+	DeparseTypeDataType
 )
 
 func DeparseNode(tp DeparseType, node *Node) (output string, err error) {
 	switch tp {
 	case DeparseTypeExpr:
-		tree := &ParseResult{
-			Stmts: []*RawStmt{
-				{
-					Stmt: node,
-				},
-			},
-		}
-		protobufTree, err := proto.Marshal(tree)
-		if err != nil {
-			return "", err
-		}
-		return parser.DeparseNodeFromProtobuf(int(tp), protobufTree)
+	case DeparseTypeDataType:
 	default:
 		return "", fmt.Errorf("deparse node failed: unsupported deparse type %d", tp)
 	}
+
+	tree := &ParseResult{
+		Stmts: []*RawStmt{
+			{
+				Stmt: node,
+			},
+		},
+	}
+	protobufTree, err := proto.Marshal(tree)
+	if err != nil {
+		return "", err
+	}
+	return parser.DeparseNodeFromProtobuf(int(tp), protobufTree)
 }
 
 func DeparseNodes(tp DeparseType, nodes []*Node) (output string, err error) {

@@ -208,6 +208,7 @@ static void deparseValue(StringInfo str, Value *value, DeparseNodeContext contex
 
 static PgQueryDeparseResult pg_query_deparse_expr_protobuf(PgQueryProtobuf parse_tree);
 static PgQueryDeparseResult pg_query_deparse_exclusion_protobuf(PgQueryProtobuf parse_tree);
+static PgQueryDeparseResult pg_query_deparse_data_type_protobuf(PgQueryProtobuf parse_tree);
 
 // "any_name" in gram.y
 static void deparseAnyName(StringInfo str, List *parts)
@@ -9917,9 +9918,59 @@ PgQueryDeparseResult pg_query_deparse_node_protobuf(enum DeparseType deparse_typ
 			break;
 		case deparse_type_exclusions:
 			return pg_query_deparse_exclusion_protobuf(parse_tree);
+		case deparse_type_data_type:
+			return pg_query_deparse_data_type_protobuf(parse_tree);
 		default:
 			elog(ERROR, "deparse node: unsupported deparse type: %d", deparse_type);
 	}
+}
+
+PgQueryDeparseResult pg_query_deparse_data_type_protobuf(PgQueryProtobuf parse_tree)
+{
+	PgQueryDeparseResult result = {0};
+	StringInfoData str;
+	MemoryContext ctx;
+	List *stmts;
+	ListCell *lc;
+
+	ctx = pg_query_enter_memory_context();
+
+	PG_TRY();
+	{
+		stmts = pg_query_protobuf_to_nodes(parse_tree);
+
+		initStringInfo(&str);
+
+		foreach(lc, stmts) {
+			deparseTypeName(&str, castNode(TypeName, castNode(RawStmt, lfirst(lc))->stmt));
+		}
+		result.query = strdup(str.data);
+	}
+	PG_CATCH();
+	{
+		ErrorData* error_data;
+		PgQueryError* error;
+
+		MemoryContextSwitchTo(ctx);
+		error_data = CopyErrorData();
+
+		// Note: This is intentionally malloc so exiting the memory context doesn't free this
+		error = malloc(sizeof(PgQueryError));
+		error->message   = strdup(error_data->message);
+		error->filename  = strdup(error_data->filename);
+		error->funcname  = strdup(error_data->funcname);
+		error->context   = NULL;
+		error->lineno	= error_data->lineno;
+		error->cursorpos = error_data->cursorpos;
+
+		result.error = error;
+		FlushErrorState();
+	}
+	PG_END_TRY();
+
+	pg_query_exit_memory_context(ctx);
+
+	return result;
 }
 
 PgQueryDeparseResult pg_query_deparse_exclusion_protobuf(PgQueryProtobuf parse_tree)
