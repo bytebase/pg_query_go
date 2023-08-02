@@ -38,6 +38,7 @@ uint64_t pg_query_hash_xxh3_64(void *data, size_t len, size_t seed) {
 import "C"
 
 import (
+	"errors"
 	"unsafe"
 )
 
