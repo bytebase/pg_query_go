@@ -94,6 +94,13 @@ PgQuerySplitResult pg_query_split_with_parser(const char *input);
 
 PgQueryDeparseResult pg_query_deparse_protobuf(PgQueryProtobuf parse_tree);
 
+enum DeparseType{
+	deparse_type_expr,
+  deparse_type_exclusions,
+  deparse_type_data_type,
+};
+PgQueryDeparseResult pg_query_deparse_node_protobuf(enum DeparseType deparse_type, PgQueryProtobuf parse_tree);
+
 void pg_query_free_normalize_result(PgQueryNormalizeResult result);
 void pg_query_free_scan_result(PgQueryScanResult result);
 void pg_query_free_parse_result(PgQueryParseResult result);
