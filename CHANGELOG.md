@@ -5,6 +5,35 @@
 * ...
 
 
+## 4.2.1     2023-05-25
+
+* Update to libpg_query 15-4.2.1 ([#85](https://github.com/pganalyze/pg_query_go/pull/85))
+  - Deparser: Handle INTERVAL correctly when used in SET statements [#184](https://github.com/pganalyze/libpg_query/pull/184)
+  - Deparser: Ensure index names are quoted as identifiers [#182](https://github.com/pganalyze/libpg_query/pull/182)
+* Suppress -Wdeprecated-non-prototype warnings ([#83](https://github.com/pganalyze/pg_query_go/pull/83) and [#84](https://github.com/pganalyze/pg_query_go/pull/84))
+* Return full structured error info instead of just error message ([#76](https://github.com/pganalyze/pg_query_go/pull/76))
+
+
+## 4.2.0     2023-02-08
+
+* Update to libpg_query 15-4.2.0
+  - Update to PostgreSQL 15.1
+
+
+## 2.2.0     2022-11-02
+
+* Update to libpg_query 13-2.2.0 ([#64](https://github.com/pganalyze/pg_query_go/pull/64))
+  - Fingerprinting version 3.1
+    - Fixes issue with "SELECT DISTINCT" having the same fingerprint as "SELECT"
+      (fingerprints for "SELECT DISTINCT" will change with this revision)
+    - Group additional DDL statements together that otherwise generate a lot of
+      unique fingerprints (ListenStmt, UnlistenStmt, NotifyStmt, CreateFunctionStmt,
+      FunctionParameter and DoStmt)
+  - Update to Postgres 13.8 patch release
+  - Backport Xcode 14.1 build fix from upcoming 13.9 release
+  - Normalize additional DDL statements
+
+
 ## 2.1.2      2022-06-28
 
 * Update libpg_query to 13-2.1.2 ([#58](https://github.com/pganalyze/pg_query_go/pull/58))

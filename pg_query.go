@@ -5,7 +5,7 @@ import (
 
 	proto "github.com/golang/protobuf/proto"
 
-	"github.com/pganalyze/pg_query_go/v2/parser"
+	"github.com/pganalyze/pg_query_go/v4/parser"
 )
 
 type DeparseType int
